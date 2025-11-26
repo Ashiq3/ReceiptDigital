@@ -22,14 +22,21 @@ export default function ReceiptList() {
     useEffect(() => {
         if (isFirebaseConfigured()) {
             const q = query(collection(db, "receipts"), orderBy("createdAt", "desc"));
-            const unsubscribe = onSnapshot(q, (snapshot) => {
-                const data = snapshot.docs.map((doc) => ({
-                    id: doc.id,
-                    ...doc.data(),
-                })) as Receipt[];
-                setReceipts(data);
-                setLoading(false);
-            });
+            const unsubscribe = onSnapshot(
+                q,
+                (snapshot) => {
+                    const data = snapshot.docs.map((doc) => ({
+                        id: doc.id,
+                        ...doc.data(),
+                    })) as Receipt[];
+                    setReceipts(data);
+                    setLoading(false);
+                },
+                (error) => {
+                    console.error("Error fetching receipts:", error);
+                    setLoading(false);
+                }
+            );
             return () => unsubscribe();
         } else {
             // Local Storage Mode
