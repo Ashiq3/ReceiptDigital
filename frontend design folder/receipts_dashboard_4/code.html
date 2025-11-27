@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Receipts Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#27AE60",
+                        "background-light": "#F7F9FC",
+                        "background-dark": "#121212",
+                        "surface-dark": "#1E1E1E",
+                        "text-light-primary": "#111827",
+                        "text-dark-primary": "#E5E7EB",
+                        "text-light-secondary": "#6b7280",
+                        "text-dark-secondary": "#9ca3af",
+                        "border-light": "#E0E0E0",
+                        "border-dark": "#374151"
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings:
+                'FILL' 0,
+                'wght' 400,
+                'GRAD' 0,
+                'opsz' 24
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+<div class="relative flex min-h-screen w-full flex-col">
+<header class="sticky top-0 z-10 flex h-16 items-center justify-between border-b border-border-light bg-background-light px-4 dark:border-border-dark dark:bg-surface-dark">
+<h1 class="text-xl font-bold text-text-light-primary dark:text-text-dark-primary">All Receipts</h1>
+<button class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full text-text-light-primary hover:bg-gray-100 dark:text-text-dark-primary dark:hover:bg-gray-700">
+<span class="material-symbols-outlined text-2xl">ios_share</span>
+</button>
+</header>
+<main class="flex-grow px-4 pt-4 pb-24">
+<div class="relative mb-4">
+<div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+<span class="material-symbols-outlined text-text-light-secondary dark:text-text-dark-secondary">search</span>
+</div>
+<input class="block w-full rounded-lg border border-border-light bg-white p-3 pl-10 text-sm text-text-light-primary focus:border-primary focus:ring-primary dark:border-border-dark dark:bg-surface-dark dark:text-text-dark-primary dark:placeholder-gray-400" id="receipt-search" placeholder="Search by store or category..." type="search"/>
+</div>
+<div class="w-full overflow-x-auto rounded-lg border border-border-light dark:border-border-dark">
+<table class="min-w-full divide-y divide-border-light text-left text-sm dark:divide-border-dark">
+<thead class="bg-gray-50 dark:bg-gray-800">
+<tr>
+<th class="px-4 py-3 font-medium text-text-light-primary dark:text-text-dark-primary" scope="col">
+<div class="flex items-center gap-1">Store <span class="material-symbols-outlined text-base">unfold_more</span></div>
+</th>
+<th class="px-4 py-3 font-medium text-text-light-primary dark:text-text-dark-primary" scope="col">
+<div class="flex items-center gap-1">Date <span class="material-symbols-outlined text-base">unfold_more</span></div>
+</th>
+<th class="px-4 py-3 font-medium text-text-light-primary dark:text-text-dark-primary" scope="col">
+<div class="flex items-center gap-1">Category <span class="material-symbols-outlined text-base">unfold_more</span></div>
+</th>
+<th class="px-4 py-3 text-right font-medium text-text-light-primary dark:text-text-dark-primary" scope="col">
+<div class="flex items-center justify-end gap-1">Total <span class="material-symbols-outlined text-base">unfold_more</span></div>
+</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-light bg-white dark:divide-border-dark dark:bg-surface-dark">
+<tr class="hover:bg-gray-50 dark:hover:bg-gray-800">
+<td class="whitespace-nowrap px-4 py-3 font-medium text-text-light-primary dark:text-text-dark-primary">Staples</td>
+<td class="whitespace-nowrap px-4 py-3 text-text-light-secondary dark:text-text-dark-secondary">Dec 15, 2023</td>
+<td class="whitespace-nowrap px-4 py-3 text-text-light-secondary dark:text-text-dark-secondary">Office Supplies</td>
+<td class="whitespace-nowrap px-4 py-3 text-right font-medium text-text-light-primary dark:text-text-dark-primary">$45.99</td>
+</tr>
+<tr class="hover:bg-gray-50 dark:hover:bg-gray-800">
+<td class="whitespace-nowrap px-4 py-3 font-medium text-text-light-primary dark:text-text-dark-primary">The Home Depot</td>
+<td class="whitespace-nowrap px-4 py-3 text-text-light-secondary dark:text-text-dark-secondary">Dec 14, 2023</td>
+<td class="whitespace-nowrap px-4 py-3 text-text-light-secondary dark:text-text-dark-secondary">Materials</td>
+<td class="whitespace-nowrap px-4 py-3 text-right font-medium text-text-light-primary dark:text-text-dark-primary">$128.50</td>
+</tr>
+<tr class="hover:bg-gray-50 dark:hover:bg-gray-800">
+<td class="whitespace-nowrap px-4 py-3 font-medium text-text-light-primary dark:text-text-dark-primary">Starbucks</td>
+<td class="whitespace-nowrap px-4 py-3 text-text-light-secondary dark:text-text-dark-secondary">Dec 12, 2023</td>
+<td class="whitespace-nowrap px-4 py-3 text-text-light-secondary dark:text-text-dark-secondary">Meals</td>
+<td class="whitespace-nowrap px-4 py-3 text-right font-medium text-text-light-primary dark:text-text-dark-primary">$12.75</td>
+</tr>
+<tr class="hover:bg-gray-50 dark:hover:bg-gray-800">
+<td class="whitespace-nowrap px-4 py-3 font-medium text-text-light-primary dark:text-text-dark-primary">United Airlines</td>
+<td class="whitespace-nowrap px-4 py-3 text-text-light-secondary dark:text-text-dark-secondary">Dec 10, 2023</td>
+<td class="whitespace-nowrap px-4 py-3 text-text-light-secondary dark:text-text-dark-secondary">Travel</td>
+<td class="whitespace-nowrap px-4 py-3 text-right font-medium text-text-light-primary dark:text-text-dark-primary">$341.22</td>
+</tr>
+<tr class="hover:bg-gray-50 dark:hover:bg-gray-800">
+<td class="whitespace-nowrap px-4 py-3 font-medium text-text-light-primary dark:text-text-dark-primary">Amazon</td>
+<td class="whitespace-nowrap px-4 py-3 text-text-light-secondary dark:text-text-dark-secondary">Dec 9, 2023</td>
+<td class="whitespace-nowrap px-4 py-3 text-text-light-secondary dark:text-text-dark-secondary">Office Supplies</td>
+<td class="whitespace-nowrap px-4 py-3 text-right font-medium text-text-light-primary dark:text-text-dark-primary">$78.14</td>
+</tr>
+<tr class="hover:bg-gray-50 dark:hover:bg-gray-800">
+<td class="whitespace-nowrap px-4 py-3 font-medium text-text-light-primary dark:text-text-dark-primary">Local Cafe</td>
+<td class="whitespace-nowrap px-4 py-3 text-text-light-secondary dark:text-text-dark-secondary">Dec 7, 2023</td>
+<td class="whitespace-nowrap px-4 py-3 text-text-light-secondary dark:text-text-dark-secondary">Meals</td>
+<td class="whitespace-nowrap px-4 py-3 text-right font-medium text-text-light-primary dark:text-text-dark-primary">$22.50</td>
+</tr>
+</tbody>
+</table>
+</div>
+</main>
+<div class="fixed bottom-6 left-1/2 -translate-x-1/2 transform">
+<button class="flex h-16 w-16 items-center justify-center rounded-full bg-primary text-white shadow-lg transition-transform hover:scale-105 active:scale-95">
+<span class="material-symbols-outlined text-4xl">photo_camera</span>
+</button>
+</div>
+</div>
+</body></html>

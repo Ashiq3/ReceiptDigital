@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Receipt Dashboard</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#4A90E2",
+                        secondary: "#50E3C2",
+                        "background-light": "#F4F6F8",
+                        "background-dark": "#121212",
+                        "text-light": "#1C1C1E",
+                        "text-dark": "#EAEAEA",
+                        "card-light": "#FFFFFF",
+                        "card-dark": "#1E1E1E",
+                        "border-light": "#EAECEF",
+                        "border-dark": "#2D2D2D",
+                        "chart-red": "#FF6B6B",
+                        "chart-yellow": "#FFD166",
+                        "chart-green": "#06D6A0",
+                        "chart-purple": "#8338EC",
+                    },
+                    fontFamily: {
+                        display: ["Inter", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                        lg: "0.75rem",
+                        xl: "1rem",
+                        full: "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings:
+                'FILL' 0,
+                'wght' 400,
+                'GRAD' 0,
+                'opsz' 24
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-display bg-background-dark text-text-dark">
+<div class="relative flex min-h-screen w-full flex-col">
+<header class="flex items-center justify-between p-4 sticky top-0 z-10 bg-background-dark/80 backdrop-blur-sm border-b border-border-dark">
+<div class="flex items-center gap-3">
+<div class="text-primary flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/20">
+<span class="material-symbols-outlined">receipt_long</span>
+</div>
+<h1 class="text-lg font-bold leading-tight tracking-tight">Dashboard</h1>
+</div>
+<button class="flex items-center justify-center gap-2 rounded-lg bg-card-dark px-4 py-2 text-sm font-semibold text-text-dark border border-border-dark">
+<span class="material-symbols-outlined text-base">ios_share</span>
+<span>Export</span>
+</button>
+</header>
+<main class="flex flex-col gap-6 p-4 pb-28">
+<section class="flex flex-col gap-4 rounded-xl bg-card-dark p-4 border border-border-dark">
+<div>
+<p class="text-sm font-medium text-text-dark/60">Total Spending</p>
+<p class="text-3xl font-bold tracking-tighter text-text-dark">$1,250.75</p>
+</div>
+<div class="flex w-full h-3 rounded-full overflow-hidden bg-border-dark">
+<div class="bg-chart-purple" style="width: 40%"></div>
+<div class="bg-chart-red" style="width: 25%"></div>
+<div class="bg-chart-yellow" style="width: 20%"></div>
+<div class="bg-chart-green" style="width: 15%"></div>
+</div>
+<div class="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+<div class="flex items-center gap-2">
+<span class="size-2 rounded-full bg-chart-purple"></span>
+<span class="text-text-dark/80">Software</span>
+<span class="ml-auto font-medium text-text-dark">$500.30</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="size-2 rounded-full bg-chart-red"></span>
+<span class="text-text-dark/80">Travel</span>
+<span class="ml-auto font-medium text-text-dark">$312.68</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="size-2 rounded-full bg-chart-yellow"></span>
+<span class="text-text-dark/80">Office Supplies</span>
+<span class="ml-auto font-medium text-text-dark">$250.15</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="size-2 rounded-full bg-chart-green"></span>
+<span class="text-text-dark/80">Utilities</span>
+<span class="ml-auto font-medium text-text-dark">$187.62</span>
+</div>
+</div>
+</section>
+<section class="flex flex-col gap-3">
+<div class="flex justify-between items-center px-1">
+<h2 class="text-base font-semibold leading-tight">High Value Receipts</h2>
+<a class="text-primary text-sm font-semibold" href="#">View All</a>
+</div>
+<div class="flex flex-col gap-2">
+<div class="flex items-center gap-4 rounded-lg bg-card-dark p-3 border border-border-dark">
+<div class="flex items-center justify-center rounded-lg bg-background-dark shrink-0 size-10">
+<span class="material-symbols-outlined text-text-dark/80">laptop_mac</span>
+</div>
+<div class="flex-1 overflow-hidden">
+<p class="text-base font-medium leading-normal truncate text-text-dark">Apple Inc.</p>
+<p class="text-sm text-text-dark/60">Oct 22, 2023</p>
+</div>
+<p class="text-base font-semibold leading-normal shrink-0 text-text-dark">$2,499.00</p>
+</div>
+<div class="flex items-center gap-4 rounded-lg bg-card-dark p-3 border border-border-dark">
+<div class="flex items-center justify-center rounded-lg bg-background-dark shrink-0 size-10">
+<span class="material-symbols-outlined text-text-dark/80">flight</span>
+</div>
+<div class="flex-1 overflow-hidden">
+<p class="text-base font-medium leading-normal truncate text-text-dark">Delta Airlines</p>
+<p class="text-sm text-text-dark/60">Oct 20, 2023</p>
+</div>
+<p class="text-base font-semibold leading-normal shrink-0 text-text-dark">$874.50</p>
+</div>
+<div class="flex items-center gap-4 rounded-lg bg-card-dark p-3 border border-border-dark">
+<div class="flex items-center justify-center rounded-lg bg-background-dark shrink-0 size-10">
+<span class="material-symbols-outlined text-text-dark/80">storefront</span>
+</div>
+<div class="flex-1 overflow-hidden">
+<p class="text-base font-medium leading-normal truncate text-text-dark">The Home Depot</p>
+<p class="text-sm text-text-dark/60">Oct 25, 2023</p>
+</div>
+<p class="text-base font-semibold leading-normal shrink-0 text-text-dark">$218.40</p>
+</div>
+</div>
+</section>
+</main>
+<div class="fixed bottom-6 right-6 z-20">
+<button class="flex size-14 items-center justify-center rounded-full bg-primary text-white shadow-lg shadow-primary/30 transition-transform active:scale-95">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1, 'wght' 500;">photo_camera</span>
+</button>
+</div>
+</div>
+
+</body></html>

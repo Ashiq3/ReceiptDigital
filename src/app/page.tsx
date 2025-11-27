@@ -1,15 +1,29 @@
+
 "use client";
 
-import CameraFAB from "@/components/CameraFAB";
-import ReceiptList from "@/components/ReceiptList";
-import { isFirebaseConfigured, auth } from "@/lib/firebase";
 import { useState, useEffect } from "react";
-import { Scan, Loader2 } from "lucide-react";
+import { isFirebaseConfigured } from "@/lib/firebase";
+import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
-export default function Home() {
-    const [processing, setProcessing] = useState(false);
+interface Receipt {
+    id: string;
+    store_name: string;
+    date: string;
+    total_amount: number;
+    currency: string;
+    category: string;
+    createdAt: any;
+}
+
+export default function Dashboard() {
+    const [receipts, setReceipts] = useState<Receipt[]>([]);
+    const [loading, setLoading] = useState(true);
     const [installPrompt, setInstallPrompt] = useState<any>(null);
+    const router = useRouter();
 
+    // PWA Install Prompt
     useEffect(() => {
         const handler = (e: any) => {
             e.preventDefault();
@@ -26,97 +40,162 @@ export default function Home() {
         }
     };
 
-    const saveToLocalStorage = (data: any) => {
-        const saved = localStorage.getItem("receipts");
-        const receipts = saved ? JSON.parse(saved) : [];
-        const newReceipt = { ...data, id: Date.now().toString(), createdAt: new Date().toISOString() };
-        localStorage.setItem("receipts", JSON.stringify([newReceipt, ...receipts]));
-        window.dispatchEvent(new Event("receipts-updated"));
+    // Data Fetching
+    useEffect(() => {
+        if (isFirebaseConfigured()) {
+            const { db } = require("@/lib/firebase"); // Lazy load db
+            const q = query(collection(db, "receipts"), orderBy("createdAt", "desc"));
+            const unsubscribe = onSnapshot(
+                q,
+                (snapshot: any) => {
+                    const data = snapshot.docs.map((doc: any) => ({
+                        id: doc.id,
+                        ...doc.data(),
+                    })) as Receipt[];
+                    setReceipts(data);
+                    setLoading(false);
+                },
+                (error: any) => {
+                    console.error("Error fetching receipts:", error);
+                    setLoading(false);
+                }
+            );
+            return () => unsubscribe();
+        } else {
+            // Local Storage Mode
+            const loadLocalReceipts = () => {
+                const saved = localStorage.getItem("receipts");
+                if (saved) {
+                    setReceipts(JSON.parse(saved));
+                }
+                setLoading(false);
+            };
+
+            loadLocalReceipts();
+            window.addEventListener("receipts-updated", loadLocalReceipts);
+            return () => window.removeEventListener("receipts-updated", loadLocalReceipts);
+        }
+    }, []);
+
+    const triggerCamera = () => {
+        router.push("/scan");
     };
 
-    const handleCapture = async (file: File) => {
-        setProcessing(true);
-        const formData = new FormData();
-        formData.append("file", file);
-
-        try {
-            const response = await fetch("/api/scan", {
-                method: "POST",
-                body: formData,
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json().catch(() => ({}));
-                throw new Error(errorData.error || "Failed to scan");
-            }
-
-            const data = await response.json();
-
-            // Check if user is logged in and Firebase is configured
-            if (isFirebaseConfigured() && auth?.currentUser) {
-                try {
-                    const { collection, addDoc, serverTimestamp } = await import("firebase/firestore");
-                    const { db } = await import("@/lib/firebase");
-
-                    await addDoc(collection(db, "receipts"), {
-                        ...data,
-                        uid: auth.currentUser.uid, // Associate with user
-                        createdAt: serverTimestamp(),
-                    });
-                } catch (e) {
-                    console.error("Error saving to Firestore:", e);
-                    alert("Scanned successfully, but failed to save to cloud. Saving locally instead.");
-                    // Fallback to local storage
-                    saveToLocalStorage(data);
-                }
-            } else {
-                // Save to Local Storage (Not logged in or no Firebase)
-                saveToLocalStorage(data);
-            }
-        } catch (error) {
-            console.error("Scan failed:", error);
-            alert(`Failed to scan receipt: ${error instanceof Error ? error.message : "Please try again."}`);
-        } finally {
-            setProcessing(false);
-        }
+    const getCategoryIcon = (category: string) => {
+        const map: Record<string, string> = {
+            food: "restaurant",
+            dining: "restaurant",
+            groceries: "storefront",
+            retail: "shopping_bag",
+            gas: "local_gas_station",
+            transport: "directions_car",
+            utilities: "bolt",
+            entertainment: "movie",
+            health: "medical_services",
+            travel: "flight",
+        };
+        return map[category?.toLowerCase()] || "receipt_long";
     };
 
     return (
-        <main className="min-h-screen bg-white dark:bg-black text-gray-900 dark:text-white">
-            {/* Mobile Header */}
-            <header className="sticky top-0 z-40 bg-white/80 dark:bg-black/80 backdrop-blur-md border-b border-gray-100 dark:border-zinc-800 px-4 h-14 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                    <div className="p-1.5 bg-blue-600 rounded-md text-white">
-                        <Scan size={16} />
-                    </div>
-                    <span className="font-bold text-lg">ReceiptAI</span>
-                </div>
+        <div className="relative flex min-h-screen w-full flex-col bg-[#0F1113] text-[#EAEAEA] font-sans">
+            <header className="flex items-center justify-between border-b border-[#2D3035] bg-[#0F1113] p-4 sticky top-0 z-10">
                 <div className="flex items-center gap-3">
-                    <a href="/login" className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline">
-                        Login
-                    </a>
+                    <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[#3079ff]/20 text-[#3079ff]">
+                        <span className="material-symbols-outlined text-2xl">receipt_long</span>
+                    </div>
+                    <h1 className="text-xl font-bold tracking-tight text-[#EAEAEA]">Receipts</h1>
+                </div>
+                <div className="flex gap-2">
                     {installPrompt && (
                         <button
                             onClick={handleInstall}
-                            className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 px-2 py-1 rounded-full font-medium"
+                            className="flex items-center justify-center gap-2 rounded-full border border-[#2D3035] bg-[#1C1E22] px-4 py-2 text-sm font-semibold text-[#EAEAEA]/90 shadow-sm transition-colors hover:bg-[#2D3035]"
                         >
-                            Install App
+                            <span>Install App</span>
                         </button>
                     )}
-                    {processing && (
-                        <div className="flex items-center gap-2 text-sm text-blue-600 font-medium animate-pulse">
-                            <Loader2 size={14} className="animate-spin" />
-                            Processing...
-                        </div>
-                    )}
+                    <button className="flex items-center justify-center gap-2 rounded-full border border-[#2D3035] bg-[#1C1E22] px-4 py-2 text-sm font-semibold text-[#EAEAEA]/90 shadow-sm transition-colors hover:bg-[#2D3035]">
+                        <span className="material-symbols-outlined text-base">ios_share</span>
+                        <span>Export</span>
+                    </button>
                 </div>
             </header>
 
-            {/* Main Content - Data Grid */}
-            <ReceiptList />
+            <main className="flex flex-col gap-8 p-4 pb-28">
+                {/* Spending Overview - Static for now as per design */}
+                <section className="flex flex-col gap-4 rounded-xl border border-[#2D3035] bg-[#1C1E22] p-4 shadow-md">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <h2 className="text-lg font-semibold text-[#EAEAEA]">Spending Overview</h2>
+                            <p className="text-sm text-[#EAEAEA]/60">Last 4 Weeks</p>
+                        </div>
+                        <div className="flex items-center gap-1 rounded-full border border-[#2D3035] bg-[#0F1113] p-1 text-xs">
+                            <button className="rounded-full bg-[#3079ff] px-3 py-1 font-semibold text-white">Weekly</button>
+                            <button className="rounded-full px-3 py-1 font-medium text-[#EAEAEA]/60">Monthly</button>
+                        </div>
+                    </div>
+                    <div className="grid min-h-[180px] grid-flow-col items-end justify-items-center gap-4 border-t border-[#2D3035] pt-4">
+                        <div className="flex h-full w-full flex-col items-center justify-end gap-2">
+                            <div className="w-full rounded-t-lg bg-[#3079ff]/20" style={{ height: "60%" }}></div>
+                            <p className="text-xs font-medium text-[#EAEAEA]/60">W1</p>
+                        </div>
+                        <div className="flex h-full w-full flex-col items-center justify-end gap-2">
+                            <div className="relative w-full rounded-t-lg bg-[#3079ff]" style={{ height: "95%" }}>
+                                <div className="absolute -top-7 left-1/2 -translate-x-1/2 rounded-md bg-white px-2 py-1 text-xs font-bold text-black shadow-lg">$412</div>
+                                <div className="absolute bottom-full left-1/2 h-2 w-px -translate-x-1/2 bg-white/50"></div>
+                            </div>
+                            <p className="text-xs font-bold text-[#3079ff]">W2</p>
+                        </div>
+                        <div className="flex h-full w-full flex-col items-center justify-end gap-2">
+                            <div className="w-full rounded-t-lg bg-[#3079ff]/20" style={{ height: "75%" }}></div>
+                            <p className="text-xs font-medium text-[#EAEAEA]/60">W3</p>
+                        </div>
+                        <div className="flex h-full w-full flex-col items-center justify-end gap-2">
+                            <div className="w-full rounded-t-lg bg-[#3079ff]/20" style={{ height: "85%" }}></div>
+                            <p className="text-xs font-medium text-[#EAEAEA]/60">W4</p>
+                        </div>
+                    </div>
+                </section>
 
-            {/* Floating Action Button */}
-            <CameraFAB onCapture={handleCapture} disabled={processing} />
-        </main>
+                <section className="flex flex-col gap-2">
+                    <div className="flex items-center justify-between px-2">
+                        <h2 className="text-lg font-semibold tracking-tight text-[#EAEAEA]">Recent Receipts</h2>
+                        <Link className="text-sm font-semibold text-[#3079ff]" href="#">View All</Link>
+                    </div>
+                    <div className="flex flex-col gap-3">
+                        {loading ? (
+                            <div className="text-center text-[#EAEAEA]/60 py-8">Loading receipts...</div>
+                        ) : receipts.length === 0 ? (
+                            <div className="text-center text-[#EAEAEA]/60 py-8">No receipts yet. Tap the camera to scan!</div>
+                        ) : (
+                            receipts.map((receipt) => (
+                                <div key={receipt.id} className="flex items-center justify-between gap-4 rounded-xl border border-[#2D3035] bg-[#1C1E22] p-3 shadow-sm">
+                                    <div className="flex items-center gap-4">
+                                        <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#0F1113]">
+                                            <span className="material-symbols-outlined text-[#EAEAEA]/60">{getCategoryIcon(receipt.category)}</span>
+                                        </div>
+                                        <div>
+                                            <p className="font-medium text-[#EAEAEA]">{receipt.store_name}</p>
+                                            <p className="text-sm text-[#EAEAEA]/60">{receipt.date}</p>
+                                        </div>
+                                    </div>
+                                    <p className="font-semibold text-[#EAEAEA]">{receipt.currency} {receipt.total_amount}</p>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                </section>
+            </main>
+
+            <div className="fixed bottom-6 right-6 z-20">
+                <button
+                    onClick={triggerCamera}
+                    className="flex size-16 items-center justify-center rounded-full bg-[#ff8c42] text-[#0F1113] shadow-lg shadow-[#ff8c42]/30 transition-transform active:scale-95"
+                >
+                    <span className="material-symbols-outlined text-3xl" style={{ fontVariationSettings: "'FILL' 1, 'wght' 500" }}>photo_camera</span>
+                </button>
+            </div>
+        </div>
     );
 }
