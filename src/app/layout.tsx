@@ -18,6 +18,8 @@ export const viewport = {
     userScalable: false,
 };
 
+import { Analytics } from "@vercel/analytics/next";
+
 export default function RootLayout({
     children,
 }: Readonly<{
@@ -28,7 +30,10 @@ export default function RootLayout({
             <head>
                 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&display=swap" rel="stylesheet" />
             </head>
-            <body className={inter.className}>{children}</body>
+            <body className={inter.className}>
+                {children}
+                <Analytics />
+            </body>
         </html>
     );
 }
