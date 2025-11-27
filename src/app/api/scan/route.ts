@@ -33,14 +33,17 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
         }
 
-        const genAI = new GoogleGenerativeAI(apiKey);
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        console.log("Processing receipt with Gemini...");
 
-        const arrayBuffer = await file.arrayBuffer();
-        const buffer = Buffer.from(arrayBuffer);
-        const base64Image = buffer.toString("base64");
+        try {
+            const genAI = new GoogleGenerativeAI(apiKey);
+            const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-        const prompt = `You are a data extraction assistant. Analyze the image of the receipt provided. Extract the following information and return it ONLY in JSON format:
+            const arrayBuffer = await file.arrayBuffer();
+            const buffer = Buffer.from(arrayBuffer);
+            const base64Image = buffer.toString("base64");
+
+            const prompt = `You are a data extraction assistant. Analyze the image of the receipt provided. Extract the following information and return it ONLY in JSON format:
 
 store_name (String)
 date (DD-MM-YYYY format)
@@ -51,37 +54,38 @@ items (Array of objects with 'item_name' and 'price')
 
 If any field is blurry or missing, use 'null'. Do not add any markdown formatting.`;
 
-        const result = await model.generateContent([
-            prompt,
-            {
-                inlineData: {
-                    data: base64Image,
-                    mimeType: file.type,
+            const result = await model.generateContent([
+                prompt,
+                {
+                    inlineData: {
+                        data: base64Image,
+                        mimeType: file.type,
+                    },
                 },
-            },
-        ]);
+            ]);
 
-        const response = await result.response;
-        const text = response.text();
+            const response = await result.response;
+            const text = response.text();
+            console.log("Gemini Response:", text);
 
-        // Clean up the response to ensure it's valid JSON
-        const cleanText = text.replace(/```json/gi, "").replace(/```/g, "").trim();
+            // Clean up the response to ensure it's valid JSON
+            const cleanText = text.replace(/```json/gi, "").replace(/```/g, "").trim();
 
-        try {
             const data = JSON.parse(cleanText);
 
             // Return the extracted data to the client
-            // The client will handle saving to Firestore or LocalStorage
             return NextResponse.json(data);
-        } catch (e) {
-            console.error("Failed to parse JSON:", e);
-            return NextResponse.json({ error: `Failed to parse receipt data: ${e instanceof Error ? e.message : String(e)}` }, { status: 500 });
+        } catch (geminiError) {
+            console.error("Gemini API Error:", geminiError);
+            return NextResponse.json({
+                error: `Gemini API Error: ${geminiError instanceof Error ? geminiError.message : String(geminiError)}`
+            }, { status: 500 });
         }
 
     } catch (error) {
         console.error("Error processing receipt:", error);
         return NextResponse.json(
-            { error: "Internal server error" },
+            { error: `Internal server error: ${error instanceof Error ? error.message : String(error)}` },
             { status: 500 }
         );
     }
