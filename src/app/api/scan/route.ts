@@ -65,21 +65,17 @@ If any field is blurry or missing, use 'null'. Do not add any markdown formattin
         const text = response.text();
 
         // Clean up the response to ensure it's valid JSON
-        const cleanText = text.replace(/```json/g, "").replace(/```/g, "").trim();
+        const cleanText = text.replace(/```json/gi, "").replace(/```/g, "").trim();
 
         try {
             const data = JSON.parse(cleanText);
 
-            // Save to Firebase
-            const docRef = await addDoc(collection(db, "receipts"), {
-                ...data,
-                createdAt: serverTimestamp(),
-            });
-
-            return NextResponse.json({ ...data, id: docRef.id });
+            // Return the extracted data to the client
+            // The client will handle saving to Firestore or LocalStorage
+            return NextResponse.json(data);
         } catch (e) {
-            console.error("Failed to parse JSON or save to DB:", e);
-            return NextResponse.json({ error: "Failed to process receipt" }, { status: 500 });
+            console.error("Failed to parse JSON:", e);
+            return NextResponse.json({ error: `Failed to parse receipt data: ${e instanceof Error ? e.message : String(e)}` }, { status: 500 });
         }
 
     } catch (error) {

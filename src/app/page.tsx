@@ -2,7 +2,7 @@
 
 import CameraFAB from "@/components/CameraFAB";
 import ReceiptList from "@/components/ReceiptList";
-import { isFirebaseConfigured } from "@/lib/firebase";
+import { isFirebaseConfigured, auth } from "@/lib/firebase";
 import { useState, useEffect } from "react";
 import { Scan, Loader2 } from "lucide-react";
 
@@ -26,6 +26,14 @@ export default function Home() {
         }
     };
 
+    const saveToLocalStorage = (data: any) => {
+        const saved = localStorage.getItem("receipts");
+        const receipts = saved ? JSON.parse(saved) : [];
+        const newReceipt = { ...data, id: Date.now().toString(), createdAt: new Date().toISOString() };
+        localStorage.setItem("receipts", JSON.stringify([newReceipt, ...receipts]));
+        window.dispatchEvent(new Event("receipts-updated"));
+    };
+
     const handleCapture = async (file: File) => {
         setProcessing(true);
         const formData = new FormData();
@@ -38,25 +46,36 @@ export default function Home() {
             });
 
             if (!response.ok) {
-                throw new Error("Failed to scan");
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.error || "Failed to scan");
             }
 
             const data = await response.json();
 
-            if (!isFirebaseConfigured()) {
-                // Save to Local Storage
-                const saved = localStorage.getItem("receipts");
-                const receipts = saved ? JSON.parse(saved) : [];
-                const newReceipt = { ...data, id: Date.now().toString(), createdAt: new Date().toISOString() };
-                localStorage.setItem("receipts", JSON.stringify([newReceipt, ...receipts]));
+            // Check if user is logged in and Firebase is configured
+            if (isFirebaseConfigured() && auth?.currentUser) {
+                try {
+                    const { collection, addDoc, serverTimestamp } = await import("firebase/firestore");
+                    const { db } = await import("@/lib/firebase");
 
-                // Trigger update
-                window.dispatchEvent(new Event("receipts-updated"));
+                    await addDoc(collection(db, "receipts"), {
+                        ...data,
+                        uid: auth.currentUser.uid, // Associate with user
+                        createdAt: serverTimestamp(),
+                    });
+                } catch (e) {
+                    console.error("Error saving to Firestore:", e);
+                    alert("Scanned successfully, but failed to save to cloud. Saving locally instead.");
+                    // Fallback to local storage
+                    saveToLocalStorage(data);
+                }
+            } else {
+                // Save to Local Storage (Not logged in or no Firebase)
+                saveToLocalStorage(data);
             }
-            // If Firebase is configured, the listener in ReceiptList handles it
         } catch (error) {
             console.error("Scan failed:", error);
-            alert("Failed to scan receipt. Please try again.");
+            alert(`Failed to scan receipt: ${error instanceof Error ? error.message : "Please try again."}`);
         } finally {
             setProcessing(false);
         }
