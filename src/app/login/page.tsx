@@ -7,17 +7,21 @@ import { auth, googleProvider } from "@/lib/firebase";
 import { signInWithPopup } from "firebase/auth";
 
 export default function LoginPage() {
+    const [error, setError] = React.useState<string | null>(null);
+
     const handleGoogleLogin = async () => {
+        setError(null);
         try {
             if (!auth || !googleProvider) {
-                console.error("Firebase auth not initialized");
+                setError("Firebase auth not initialized. Please refresh.");
                 return;
             }
             await signInWithPopup(auth, googleProvider);
             // Redirect will be handled by the protected route check or we can push here
             window.location.href = "/";
-        } catch (error) {
-            console.error("Login failed:", error);
+        } catch (err: any) {
+            console.error("Login failed:", err);
+            setError(err.message || "Failed to login with Google");
         }
     };
 
@@ -30,6 +34,12 @@ export default function LoginPage() {
                 </div>
                 <h1 className="text-[#212121] dark:text-[#E0E0E0] tracking-tight text-3xl font-bold leading-tight text-center">Welcome Back</h1>
                 <p className="text-[#212121]/80 dark:text-[#E0E0E0]/80 text-base font-normal leading-normal pt-2 text-center">Sign in to manage your receipts.</p>
+
+                {error && (
+                    <div className="mt-4 w-full rounded-lg bg-red-100 p-3 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-400 text-center">
+                        {error}
+                    </div>
+                )}
 
                 <div className="flex w-full flex-col items-stretch gap-3 px-0 py-6">
                     <button onClick={handleGoogleLogin} className="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-white dark:bg-[#FFFFFF1A] text-[#212121] dark:text-[#E0E0E0] text-base font-medium leading-normal tracking-[0.01em] border border-gray-300 dark:border-gray-600 w-full hover:bg-gray-50 dark:hover:bg-[#FFFFFF2A] transition-colors">
