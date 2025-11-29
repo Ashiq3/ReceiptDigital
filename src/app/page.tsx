@@ -43,24 +43,33 @@ export default function Dashboard() {
     // Data Fetching
     useEffect(() => {
         if (isFirebaseConfigured()) {
-            const { db } = require("@/lib/firebase"); // Lazy load db
-            const q = query(collection(db, "receipts"), orderBy("createdAt", "desc"));
-            const unsubscribe = onSnapshot(
-                q,
-                (snapshot: any) => {
-                    const data = snapshot.docs.map((doc: any) => ({
-                        id: doc.id,
-                        ...doc.data(),
-                    })) as Receipt[];
-                    setReceipts(data);
-                    setLoading(false);
-                },
-                (error: any) => {
-                    console.error("Error fetching receipts:", error);
-                    setLoading(false);
+            const { db, auth } = require("@/lib/firebase"); // Lazy load db and auth
+            const { onAuthStateChanged } = require("firebase/auth");
+
+            const unsubscribeAuth = onAuthStateChanged(auth, (user: any) => {
+                if (!user) {
+                    router.push("/login");
+                } else {
+                    const q = query(collection(db, "receipts"), orderBy("createdAt", "desc"));
+                    const unsubscribeSnapshot = onSnapshot(
+                        q,
+                        (snapshot: any) => {
+                            const data = snapshot.docs.map((doc: any) => ({
+                                id: doc.id,
+                                ...doc.data(),
+                            })) as Receipt[];
+                            setReceipts(data);
+                            setLoading(false);
+                        },
+                        (error: any) => {
+                            console.error("Error fetching receipts:", error);
+                            setLoading(false);
+                        }
+                    );
+                    return () => unsubscribeSnapshot();
                 }
-            );
-            return () => unsubscribe();
+            });
+            return () => unsubscribeAuth();
         } else {
             // Local Storage Mode
             const loadLocalReceipts = () => {

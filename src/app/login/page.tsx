@@ -1,8 +1,26 @@
+"use client";
 
 import React from 'react';
 import Link from 'next/link';
 
+import { auth, googleProvider } from "@/lib/firebase";
+import { signInWithPopup } from "firebase/auth";
+
 export default function LoginPage() {
+    const handleGoogleLogin = async () => {
+        try {
+            if (!auth || !googleProvider) {
+                console.error("Firebase auth not initialized");
+                return;
+            }
+            await signInWithPopup(auth, googleProvider);
+            // Redirect will be handled by the protected route check or we can push here
+            window.location.href = "/";
+        } catch (error) {
+            console.error("Login failed:", error);
+        }
+    };
+
     return (
         <div className="relative flex min-h-screen w-full flex-col items-center justify-center p-4 bg-[#f6f8f6] dark:bg-[#102216] font-sans">
             <div className="flex w-full max-w-sm flex-col items-center">
@@ -14,7 +32,7 @@ export default function LoginPage() {
                 <p className="text-[#212121]/80 dark:text-[#E0E0E0]/80 text-base font-normal leading-normal pt-2 text-center">Sign in to manage your receipts.</p>
 
                 <div className="flex w-full flex-col items-stretch gap-3 px-0 py-6">
-                    <button className="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-white dark:bg-[#FFFFFF1A] text-[#212121] dark:text-[#E0E0E0] text-base font-medium leading-normal tracking-[0.01em] border border-gray-300 dark:border-gray-600 w-full hover:bg-gray-50 dark:hover:bg-[#FFFFFF2A] transition-colors">
+                    <button onClick={handleGoogleLogin} className="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-white dark:bg-[#FFFFFF1A] text-[#212121] dark:text-[#E0E0E0] text-base font-medium leading-normal tracking-[0.01em] border border-gray-300 dark:border-gray-600 w-full hover:bg-gray-50 dark:hover:bg-[#FFFFFF2A] transition-colors">
                         <img alt="Google G logo" className="w-5 h-5 mr-3" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCcp1lR1i0NSm4QZze4s96KLP1BZvLrgePkeB_Yq5vVUIbhke8jerILcWj54WOQcBSMQsaMST42rYAcSJ6INHB_v2esEW1wPV7L_LU3S-AWQ7YEkyNdmj8Piy4wTaLjXohORJtcXf35oB7MIGqY6GPCGAE8YpPj4TgackIegVYC8f6lyfAddl2KdXTnwAVf4EpukNZ_o3jIeO38tdWSaT9SwpUyuyo-wUWqfZJjIaDz81r2MpbdDxteN1cK6Fg0NxVHR_ogA3_H05zQ" />
                         <span className="truncate">Continue with Google</span>
                     </button>

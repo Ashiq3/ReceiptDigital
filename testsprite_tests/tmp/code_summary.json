@@ -1,0 +1,17 @@
+{
+    "projectName": "receipt-scanner-app",
+    "techStack": {
+        "framework": "Next.js 14.1.0",
+        "language": "TypeScript",
+        "styling": "Tailwind CSS",
+        "database": "Firebase",
+        "ai": "Google Generative AI"
+    },
+    "features": [
+        "Receipt Scanning",
+        "PWA Support",
+        "Vercel Analytics",
+        "Firebase Integration"
+    ],
+    "projectStructure": "Standard Next.js App Router"
+}

@@ -1,0 +1,23 @@
+[
+    {
+        "testId": "TEST-001",
+        "title": "Home Page Load",
+        "description": "Verify that the home page loads correctly and displays the main components.",
+        "steps": [
+            "Navigate to the home page.",
+            "Check for the presence of the header.",
+            "Check for the presence of the 'Scan Receipt' button."
+        ],
+        "expectedResult": "Home page loads with all key elements visible."
+    },
+    {
+        "testId": "TEST-002",
+        "title": "Camera Access",
+        "description": "Verify that clicking the scan button triggers camera access.",
+        "steps": [
+            "Click the 'Scan Receipt' button.",
+            "Check if the camera interface or permission prompt appears."
+        ],
+        "expectedResult": "Camera interface opens or permission is requested."
+    }
+]

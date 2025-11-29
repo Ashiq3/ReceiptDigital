@@ -26,6 +26,8 @@ if (typeof window !== "undefined" || process.env.NEXT_PUBLIC_FIREBASE_API_KEY) {
     } catch (e) {
         console.error("Firebase initialization error:", e);
     }
+} else {
+    console.warn("Firebase configuration missing or running on server without config.");
 }
 
 export { db, auth, googleProvider };
