@@ -3,7 +3,8 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { isFirebaseConfigured, auth } from "@/lib/firebase";
+import { isFirebaseConfigured, auth, db } from "@/lib/firebase";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 
 export default function ScanPage() {
     const router = useRouter();
@@ -96,11 +97,11 @@ export default function ScanPage() {
 
             const data = await response.json();
 
+
+
             // Save logic (similar to dashboard)
             if (isFirebaseConfigured() && auth?.currentUser) {
                 try {
-                    const { collection, addDoc, serverTimestamp } = await import("firebase/firestore");
-                    const { db } = await import("@/lib/firebase");
                     await addDoc(collection(db, "receipts"), {
                         ...data,
                         uid: auth.currentUser.uid,
