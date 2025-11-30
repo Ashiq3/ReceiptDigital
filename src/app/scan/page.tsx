@@ -135,7 +135,7 @@ export default function ScanPage() {
     };
 
     return (
-        <div className="relative mx-auto flex h-screen w-full flex-col bg-[#121212] overflow-hidden font-sans">
+        <div className="relative mx-auto flex h-screen w-full flex-col bg-background overflow-hidden font-sans">
             {/* Camera View */}
             <div className="absolute inset-0 z-0 flex h-full w-full flex-col">
                 <video
@@ -152,14 +152,14 @@ export default function ScanPage() {
                 <header className="flex items-center p-4">
                     <button
                         onClick={() => router.back()}
-                        className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-sm"
+                        className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-surface/50 text-text-main backdrop-blur-sm"
                     >
                         <span className="material-symbols-outlined text-2xl">close</span>
                     </button>
                     <div className="flex-1"></div>
                     <button
                         onClick={toggleFlash}
-                        className={`flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-sm ${flashOn ? 'text-yellow-400' : ''}`}
+                        className={`flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-surface/50 text-text-main backdrop-blur-sm ${flashOn ? 'text-yellow-400' : ''}`}
                     >
                         <span className="material-symbols-outlined text-2xl">flash_on</span>
                     </button>
@@ -167,7 +167,7 @@ export default function ScanPage() {
 
                 <main className="flex flex-1 flex-col items-center justify-center p-4">
                     <div className="h-full w-full max-w-xs rounded-xl border-2 border-dashed border-white/70"></div>
-                    <p className="mt-4 text-center text-sm font-medium text-white">Position receipt within the frame</p>
+                    <p className="mt-4 text-center text-sm font-medium text-text-main">Position receipt within the frame</p>
                 </main>
 
                 <footer className="p-6">
@@ -184,26 +184,26 @@ export default function ScanPage() {
 
             {/* Analyzing Overlay */}
             {analyzing && (
-                <div className="absolute inset-0 z-20 flex h-full w-full flex-col items-center justify-center bg-black/70 p-8 backdrop-blur-md">
-                    <div className="flex h-16 w-16 animate-spin items-center justify-center rounded-full border-4 border-t-[#4A90E2] border-white/30"></div>
-                    <h2 className="mt-6 text-xl font-bold text-[#FFFFFF]">Analyzing your receipt...</h2>
-                    <p className="mt-2 text-center text-[#8E8E93]">Our AI is reading the details. This will only take a moment.</p>
+                <div className="absolute inset-0 z-20 flex h-full w-full flex-col items-center justify-center bg-background/90 p-8 backdrop-blur-md">
+                    <div className="flex h-16 w-16 animate-spin items-center justify-center rounded-full border-4 border-t-primary border-white/30"></div>
+                    <h2 className="mt-6 text-xl font-bold text-text-main">Analyzing your receipt...</h2>
+                    <p className="mt-2 text-center text-text-muted">Our AI is reading the details. This will only take a moment.</p>
                 </div>
             )}
 
             {/* Error Overlay */}
             {error && (
-                <div className="absolute inset-0 z-30 flex h-full w-full flex-col items-center justify-center bg-black/70 p-8 backdrop-blur-md">
-                    <div className="flex w-full max-w-sm flex-col items-center rounded-xl bg-[#1C1C1E] p-6 text-center shadow-lg">
+                <div className="absolute inset-0 z-30 flex h-full w-full flex-col items-center justify-center bg-background/90 p-8 backdrop-blur-md">
+                    <div className="flex w-full max-w-sm flex-col items-center rounded-xl bg-surface p-6 text-center shadow-lg">
                         <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#D0021B]/20 text-[#D0021B]">
                             <span className="material-symbols-outlined text-4xl">error</span>
                         </div>
-                        <h2 className="mt-4 text-2xl font-bold text-[#FFFFFF]">Scan Unsuccessful</h2>
-                        <p className="mt-2 text-[#8E8E93]">{error}</p>
+                        <h2 className="mt-4 text-2xl font-bold text-text-main">Scan Unsuccessful</h2>
+                        <p className="mt-2 text-text-muted">{error}</p>
                         <div className="mt-6 flex w-full flex-col gap-3">
                             <button
                                 onClick={() => setError(null)}
-                                className="flex h-12 w-full cursor-pointer items-center justify-center rounded-lg bg-[#4A90E2] text-base font-bold text-white"
+                                className="flex h-12 w-full cursor-pointer items-center justify-center rounded-lg bg-primary text-base font-bold text-white"
                             >
                                 Retry Scan
                             </button>

@@ -12,17 +12,22 @@ const config: Config = {
                 "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
                 "gradient-conic":
                     "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+                "neon-gradient": "linear-gradient(to bottom right, #0F172A, #1E1B4B)",
             },
             colors: {
-                "primary": {
-                    DEFAULT: "#0D47A1"
+                background: "#050505", // Deep black/gray
+                surface: "#121212", // Slightly lighter for cards
+                primary: "#3B82F6", // Electric Blue
+                secondary: "#8B5CF6", // Violet
+                accent: "#F472B6", // Pink
+                text: {
+                    main: "#E2E8F0",
+                    muted: "#94A3B8",
                 },
-                "background-light": "#f6f8f6",
-                "background-dark": "#102216",
-                "text-light": "#212121",
-                "text-dark": "#E0E0E0",
-                "field-light": "#F1F3F4",
-                "field-dark": "#2a3a2e",
+                border: "#2D3748",
+            },
+            fontFamily: {
+                sans: ["Inter", "sans-serif"],
             },
         },
     },
