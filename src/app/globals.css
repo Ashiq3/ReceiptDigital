@@ -3,14 +3,14 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 255, 255, 255;
-  --background-start-rgb: 5, 5, 5;
-  --background-end-rgb: 5, 5, 5;
+  --foreground-rgb: 234, 234, 234;
+  --background-start-rgb: 15, 17, 19;
+  --background-end-rgb: 15, 17, 19;
 }
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: #050505;
+  background: #0F1113;
   font-family: 'Inter', sans-serif;
 }
 
@@ -27,22 +27,4 @@ body {
   word-wrap: normal;
   white-space: nowrap;
   direction: ltr;
-}
-
-@keyframes bounce-slight {
-
-  0%,
-  100% {
-    transform: translate(-50%, -25%);
-    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
-  }
-
-  50% {
-    transform: translate(-50%, 0);
-    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
-  }
-}
-
-.animate-bounce-slight {
-  animation: bounce-slight 1s infinite;
 }
