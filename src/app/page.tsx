@@ -6,6 +6,7 @@ import { isFirebaseConfigured } from "@/lib/firebase";
 import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import ReceiptModal from "@/components/ReceiptModal";
 
 interface Receipt {
     id: string;
@@ -14,12 +15,14 @@ interface Receipt {
     total_amount: number;
     currency: string;
     category: string;
+    items?: { item_name: string; price: number }[];
     createdAt: any;
 }
 
 export default function Dashboard() {
     const [receipts, setReceipts] = useState<Receipt[]>([]);
     const [loading, setLoading] = useState(true);
+    const [selectedReceipt, setSelectedReceipt] = useState<Receipt | null>(null);
     const [installPrompt, setInstallPrompt] = useState<any>(null);
     const router = useRouter();
 
@@ -179,23 +182,29 @@ export default function Dashboard() {
                             <div className="text-center text-text-muted py-8">No receipts yet. Tap the camera to scan!</div>
                         ) : (
                             receipts.map((receipt) => (
-                                <div key={receipt.id} className="flex items-center justify-between gap-4 rounded-xl border border-border bg-surface p-3 shadow-sm">
+                                <div
+                                    key={receipt.id}
+                                    onClick={() => setSelectedReceipt(receipt)}
+                                    className="flex items-center justify-between gap-4 rounded-xl border border-border bg-surface p-3 shadow-sm cursor-pointer transition-colors hover:bg-border/50"
+                                >
                                     <div className="flex items-center gap-4">
                                         <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-background">
                                             <span className="material-symbols-outlined text-text-muted">{getCategoryIcon(receipt.category)}</span>
                                         </div>
                                         <div>
-                                            <p className="font-medium text-text-main">{receipt.store_name}</p>
-                                            <p className="text-sm text-text-muted">{receipt.date}</p>
+                                            <p className="font-medium text-text-main">{receipt.store_name || "Unknown Store"}</p>
+                                            <p className="text-sm text-text-muted">{receipt.date || "No Date"}</p>
                                         </div>
                                     </div>
-                                    <p className="font-semibold text-text-main">{receipt.currency} {receipt.total_amount}</p>
+                                    <p className="font-semibold text-text-main">{receipt.currency || "$"} {receipt.total_amount?.toFixed(2) || "0.00"}</p>
                                 </div>
                             ))
                         )}
                     </div>
                 </section>
             </main>
+
+            <ReceiptModal receipt={selectedReceipt} onClose={() => setSelectedReceipt(null)} />
 
             <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-20">
                 <button

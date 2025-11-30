@@ -12,6 +12,7 @@ export default function ScanPage() {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [stream, setStream] = useState<MediaStream | null>(null);
     const [analyzing, setAnalyzing] = useState(false);
+    const [success, setSuccess] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [flashOn, setFlashOn] = useState(false);
 
@@ -115,8 +116,11 @@ export default function ScanPage() {
                 saveToLocalStorage(data);
             }
 
-            // Success - go back to dashboard
-            router.push("/");
+            // Success - show success message then redirect
+            setSuccess(true);
+            setTimeout(() => {
+                router.push("/");
+            }, 1500);
 
         } catch (err) {
             console.error("Scan error:", err);
@@ -188,6 +192,17 @@ export default function ScanPage() {
                     <div className="flex h-16 w-16 animate-spin items-center justify-center rounded-full border-4 border-t-primary border-white/30"></div>
                     <h2 className="mt-6 text-xl font-bold text-text-main">Analyzing your receipt...</h2>
                     <p className="mt-2 text-center text-text-muted">Our AI is reading the details. This will only take a moment.</p>
+                </div>
+            )}
+
+            {/* Success Overlay */}
+            {success && (
+                <div className="absolute inset-0 z-20 flex h-full w-full flex-col items-center justify-center bg-background/90 p-8 backdrop-blur-md">
+                    <div className="flex h-20 w-20 items-center justify-center rounded-full bg-green-500/20 text-green-500">
+                        <span className="material-symbols-outlined text-5xl">check_circle</span>
+                    </div>
+                    <h2 className="mt-6 text-2xl font-bold text-text-main">Scan Complete!</h2>
+                    <p className="mt-2 text-center text-text-muted">Receipt saved successfully.</p>
                 </div>
             )}
 
